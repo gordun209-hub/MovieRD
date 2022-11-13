@@ -1,3 +1,1 @@
-ExampleRequest  = "https://api.themoviedb.org/3/movie/550?api_key=ce50bf33b5c5d345eff1afb5ff756c63"
-ReadAccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjZTUwYmYzM2I1YzVkMzQ1ZWZmMWFmYjVmZjc1NmM2MyIsInN1YiI6IjYzNzEwMmEwMDI4NDIwMDBkY2FiM2ViMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.lCp2cdI4ujLq4Jgns_wOccQ5apPaOyLs-IrSNuoCDww"
-APIKEY          = "ce50bf33b5c5d345eff1afb5ff756c63"
+ce50bf33b5c5d345eff1afb5ff756c63

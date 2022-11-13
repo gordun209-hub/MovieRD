@@ -4,12 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
+	
 )
 
 const (
-	ExampleRequest  = "<Your Api Key Req>"
-	ReadAccessToken = "<Your Access Token>"
-	APIKEY          = "<Your Api Key>"
 	userLimitForNow = 5
 	host            = "localhost"
 	port            = 5432
@@ -122,7 +120,11 @@ func NewDB() *DB {
 		password,
 		dbname,
 	)
+
 	db, err := sql.Open("postgres", psqlconn)
+	db.SetConnMaxLifetime(time.Minute * 3)
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(10)
 	if err != nil {
 		fmt.Println(err)
 	}
