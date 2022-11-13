@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -22,9 +23,44 @@ type DB struct {
 }
 
 type User struct {
-	ID    int
-	Name  string
-	Email string
+	ID              int
+	Name            string
+	Email           string
+	FollowingMovies []Movie
+}
+
+type Movie struct {
+	ID              int
+	Name            string
+	NextReleaseDate time.Time
+}
+
+func (u User) String() string {
+	return fmt.Sprintf("ID: %d, Name: %s, Email: %s", u.ID, u.Name, u.Email)
+}
+
+func (u User) UpdateName(name string) {
+	// TODO
+}
+
+func (u User) UpdateEmail(email string) {
+	// TODO
+}
+
+func (u User) Delete() {
+	// TODO
+}
+
+func (u User) GetID() int {
+	return u.ID
+}
+
+func (u User) GetName() string {
+	return u.Name
+}
+
+func (u User) GetEmail() string {
+	return u.Email
 }
 
 func NewDB() *DB {
@@ -41,7 +77,7 @@ func NewDB() *DB {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v", err)
 		os.Exit(1)
 	}
-
+	fmt.Println("Connected to DB!!!")
 	return &DB{conn}
 }
 
@@ -62,30 +98,13 @@ func Main() {
 	conn := NewDB()
 	defer conn.Close()
 
-	var greeting string
-
-	err := conn.QueryRow(context.Background(), "select 'Hello, world!'").Scan(&greeting)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
-		os.Exit(1)
-	}
-
-	// display database
-
-	// Insert Users table
-	_, err = conn.Exec(context.Background(), "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name TEXT, email TEXT)")
+	_, err := conn.Exec(
+		context.Background(),
+		"CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name TEXT, email TEXT)",
+	)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to create table: %va", err)
 	}
-
-	conn.InsertUser("laaa", "mww")
-	
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to insert user: %v", err)
-	}
-
-	// print users
-	conn.getUsers()
 }
 
 func (db *DB) getUsers() {
@@ -140,5 +159,24 @@ func (db *DB) GetUser(name string) User {
 		fmt.Println(err)
 	}
 
-	return User{id, name, email}
+	return User{id, name, email, nil}
+}
+
+func (db *DB) GetAllUsers() []User {
+	rows := db.Query("SELECT * FROM users")
+	defer rows.Close()
+	var users []User
+	for rows.Next() {
+		var id int
+		var name string
+		var email string
+		err := rows.Scan(&id, &name, &email)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		users = append(users, User{id, name, email, nil})
+	}
+
+	return users
 }
