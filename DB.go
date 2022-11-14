@@ -77,7 +77,6 @@ func NewDB() *DB {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v", err)
 		os.Exit(1)
 	}
-	fmt.Println("Connected to DB!!!")
 	return &DB{conn}
 }
 
@@ -107,20 +106,23 @@ func Main() {
 	}
 }
 
-func (db *DB) getUsers() {
+func (db *DB) getUsers() []User {
 	rows := db.Query("SELECT * FROM users")
 	defer rows.Close()
+	var users []User
 	for rows.Next() {
 		var id int
 		var name string
 		var email string
 		err := rows.Scan(&id, &name, &email)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println(err, "err")
 		}
 
-		fmt.Println(id, name, email)
+		users = append(users, User{id, name, email, nil})
 	}
+
+	return users
 }
 
 func (db *DB) InsertUser(name string, email string) {
