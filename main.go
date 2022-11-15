@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"os"
+	"io/ioutil"
 
 	"github.com/gorilla/mux"
 )
@@ -38,29 +38,43 @@ var (
 )
 
 type Movie struct {
-	ID    string `json:"id"`
-	Title string `json:"title"`
-}
-
-func StoreMoviesAndIDs() []Movie {
-	file, err := os.Open("top250TV.json")
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-	// TODO read data from json
-	var movies []Movie
-	json.NewDecoder(file).Decode(&movies)
-	fmt.Println(movies)
-
-	return movies
+	Items []struct {
+		ID              string `json:"id"`
+		Rank            string `json:"rank"`
+		Title           string `json:"title"`
+		FullTitle       string `json:"fullTitle"`
+		Year            string `json:"year"`
+		Image           string `json:"image"`
+		Crew            string `json:"crew"`
+		ImDBRating      string `json:"imDbRating"`
+		ImDBRatingCount string `json:"imDbRatingCount"`
+	} `json:"items"`
 }
 
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", Welcome)
-	moi := StoreMoviesAndIDs()
-	fmt.Println(moi)
+	Movies := ReadJSONfile()
+	fmt.Println(FormatMovieData(Movies))
 
 	// http.ListenAndServe(":8080", r)
+}
+
+func FormatMovieData(m Movie) string {
+	var movieData string
+	for _, item := range m.Items {
+		movieData += fmt.Sprintf("Title: %s\n", item.Title)
+	}
+	return movieData
+}
+
+func ReadJSONfile() Movie {
+	var movie Movie
+	data, err := ioutil.ReadFile("top250TV.json")
+	if err != nil {
+		panic(err)
+	}
+	json.Unmarshal(data, &movie)
+	fmt.Println(movie.Items)
+	return movie
 }
