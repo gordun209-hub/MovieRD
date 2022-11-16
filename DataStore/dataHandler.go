@@ -1,5 +1,8 @@
 package datastore
 
+/*
+This Module makes Handling data easy and contains structs for data
+*/
 import (
 	"encoding/json"
 	"fmt"
