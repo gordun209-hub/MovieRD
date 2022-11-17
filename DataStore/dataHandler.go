@@ -2,6 +2,7 @@ package datastore
 
 /*
 This Module makes Handling data easy and contains structs for data
+This is important for getting id's of movies for using in the API
 */
 import (
 	"encoding/json"
@@ -9,6 +10,7 @@ import (
 	"os"
 )
 
+// Represents simple show data from the API
 type Item struct {
 	ID              string `json:"id"`
 	Rank            string `json:"rank"`
@@ -21,6 +23,7 @@ type Item struct {
 	ImDBRatingCount string `json:"imDbRatingCount"`
 }
 
+// Represents a show
 type Show struct {
 	Items []Item `json:"items"`
 }
